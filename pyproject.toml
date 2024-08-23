@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "instagram"
+version = "0.1.0"
+description = ""
+authors = ["sergeyTurenko123 <sergej_petrovich_8484@ukr.net>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.112.1"
+sqlalchemy = "^2.0.32"
+uvicorn = {extras = ["standard"], version = "^0.30.6"}
+alembic = "^1.13.2"
+psycopg2 = "^2.9.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
