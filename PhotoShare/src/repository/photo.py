@@ -17,7 +17,7 @@ async def create_photo(body: PhotoModel, db: Session) -> Photos:
     user = db.query(Users).filter(Users.id == body.user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    photo = Photos(photo = body.photo, tags=tags, user=user)
+    photo = Photos(photo = body.photo, description = body.description, tags=tags, user=user)
     db.add(photo)
     db.commit()
     db.refresh(photo)
@@ -36,6 +36,7 @@ async def update_photo(photo_id: int, body: PhotoUpdate, db: Session) -> Photos 
     if photo:
         tags = db.query(Tag).filter(Tag.id.in_(body.tags)).all()
         photo.photo = body.photo
+        photo.description = body.description
         photo.user = body.user_id
         photo.tags = tags
         db.commit()

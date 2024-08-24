@@ -46,7 +46,7 @@ class RequestEmail(BaseModel):
         
 class PhotoBase(BaseModel):
     photo: str
-    
+    description: str = Field(max_length=500)    
     
 class PhotoModel(PhotoBase):
     tags: List[int]
@@ -61,6 +61,7 @@ class PhotoStatusUpdate(BaseModel):
 class PhotoResponse(BaseModel):
     id: int
     photo: str
+    description: str = Field(max_length=500)
     tags: List[TagResponse]
     user: UserDb
     created_at: datetime

@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from src.database.models import User
+from src.database.models import Users
 
 
 def test_create_user(client, user, monkeypatch):
@@ -37,7 +37,7 @@ def test_login_user_not_confirmed(client, user):
 
 
 def test_login_user(client, session, user):
-    current_user: User = session.query(User).filter(User.email == user.get('email')).first()
+    current_user: Users = session.query(Users).filter(Users.email == user.get('email')).first()
     current_user.confirmed = True
     session.commit()
     response = client.post(
