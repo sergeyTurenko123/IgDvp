@@ -45,7 +45,7 @@ class RequestEmail(BaseModel):
 
         
 class PhotoBase(BaseModel):
-    photo: str = Field(max_length=500)
+    photo: str
     
     
 class PhotoModel(PhotoBase):
@@ -60,7 +60,7 @@ class PhotoStatusUpdate(BaseModel):
 
 class PhotoResponse(BaseModel):
     id: int
-    photo: str = Field(max_length=500)
+    photo: str
     tags: List[TagResponse]
     user: UserDb
     created_at: datetime

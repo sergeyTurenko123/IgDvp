@@ -1,6 +1,10 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File
 from sqlalchemy.orm import Session
+from src.conf.config import config
+import cloudinary.uploader
 
+from src.database.models import Users
+from src.services.auth import auth_service
 from src.database.db import get_db
 from src.schemas import PhotoModel, PhotoUpdate, PhotoStatusUpdate, PhotoResponse
 from src.repository import photo as repository_photo
@@ -20,11 +24,9 @@ async def read_photo(photo_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
     return photo
 
-
 @router.post("/", response_model=PhotoResponse, status_code=status.HTTP_201_CREATED)
 async def create_photo(body: PhotoModel, db: Session = Depends(get_db)):
     return await repository_photo.create_photo(body, db)
-
 
 @router.put("/{photo_id}", response_model=PhotoResponse)
 async def update_photo(body: PhotoUpdate, photo_id: int, db: Session = Depends(get_db)):

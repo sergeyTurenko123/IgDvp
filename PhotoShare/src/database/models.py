@@ -40,3 +40,12 @@ class Photos(Base):
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = relationship('Users', backref='photos')
     created_at = Column('created_at', DateTime, default=func.now())
+
+class Comments(Base):
+    __tablename__ = "comments"
+    id = Column(Integer, primary_key=True)
+    comment = Column(String(250), nullable=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    user = relationship('Users', backref='comments')
+    photo_id = Column(Integer, ForeignKey('photos.id', ondelete='CASCADE'), nullable=False)
+    user = relationship('Photos', backref='comments')

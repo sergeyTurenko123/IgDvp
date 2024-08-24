@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.models import Photos, Tag, Users
 from src.schemas import PhotoUpdate, PhotoStatusUpdate, PhotoModel
@@ -16,12 +17,11 @@ async def create_photo(body: PhotoModel, db: Session) -> Photos:
     user = db.query(Users).filter(Users.id == body.user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    photo = Photos(photo=body.photo, tags=tags, user=user)
+    photo = Photos(photo = body.photo, tags=tags, user=user)
     db.add(photo)
     db.commit()
     db.refresh(photo)
     return photo
-
 
 async def remove_photo(quote_id: int, db: Session) -> Photos | None:
     quote = db.query(Photos).filter(Photos.id == quote_id).first()
