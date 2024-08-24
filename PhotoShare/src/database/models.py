@@ -22,7 +22,7 @@ quote_m2m_tag = Table(
     "quote_m2m_tag",
     Base.metadata,
     Column("id", Integer, primary_key=True),
-    Column("quote_id", Integer, ForeignKey("quote.id", ondelete="CASCADE")),
+    Column("quote_id", Integer, ForeignKey("photos.id", ondelete="CASCADE")),
     Column("tag_id", Integer, ForeignKey("tag.id", ondelete="CASCADE")),
 )
 

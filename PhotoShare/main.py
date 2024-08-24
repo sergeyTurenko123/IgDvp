@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 
-from src.routes import quote, tags, author
+from PhotoShare.src.routes import photo, user
+from src.routes import tags
 
 app = FastAPI()
 
 app.include_router(tags.router, prefix='/api')
-app.include_router(quote.router, prefix='/api')
-app.include_router(author.router, prefix='/api')
+app.include_router(photo.router, prefix='/api')
+app.include_router(user.router, prefix='/api')
 
 
 @app.get("/")
