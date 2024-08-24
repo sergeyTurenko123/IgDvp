@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel, Field, model_validator
-from dataclasses import dataclass, field
+from pydantic import BaseModel, Field, EmailStr
 
 class TagModel(BaseModel):
     name: str = Field(max_length=25)
@@ -13,24 +12,36 @@ class TagResponse(TagModel):
     class Config:
         orm_mode = True
 
-class AuthorBase(BaseModel):
-    fullname: str = Field(max_length=50)
-    born_date: str = Field(max_length=50)
-    born_location: str = Field(max_length=50)
-    description: str = Field(max_length=50)
+class UserModel(BaseModel):
+    username: str = Field(min_length=4, max_length=16)
+    email: str
+    password: str = Field(min_length=6, max_length=10)
 
-class AuthorUpdate(AuthorBase):
-    done: bool
 
-class AuthorStatusUpdate(BaseModel):
-    done: bool
-
-class AuthorResponse(AuthorBase):
+class UserDb(BaseModel):
     id: int
+    username: str
+    email: str
     created_at: datetime
-    
-    class Config:
+    avatar: str
+
+    class ConfigDict:
         orm_mode = True
+
+
+class UserResponse(BaseModel):
+    user: UserDb
+    detail: str = "User successfully created"
+
+
+class TokenModel(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str = "bearer"
+
+class RequestEmail(BaseModel):
+    email: EmailStr
+
         
 class QuoteBase(BaseModel):
     quote: str = Field(max_length=500)
@@ -50,7 +61,7 @@ class QuoteResponse(BaseModel):
     id: int
     quote: str = Field(max_length=500)
     tags: List[TagResponse]
-    author: AuthorResponse
+    author: UserResponse
     created_at: datetime
     
     class Config:

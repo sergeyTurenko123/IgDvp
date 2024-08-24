@@ -2,7 +2,7 @@ from typing import List
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from src.database.models import Quote, Tag, Author
+from src.database.models import Photos, Tag, User
 from src.schemas import QuoteBase, QuoteUpdate, QuoteStatusUpdate, QuoteResponse, QuoteModel
 
 async def get_quotes(skip: int, limit: int, db: Session) -> List[Quote]:

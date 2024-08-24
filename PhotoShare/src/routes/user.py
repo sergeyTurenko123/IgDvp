@@ -1,52 +1,49 @@
-from typing import List
-
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, Depends, UploadFile, File
 from sqlalchemy.orm import Session
+import cloudinary
+import cloudinary.uploader
 
 from src.database.db import get_db
-from src.schemas import AuthorResponse, AuthorBase, AuthorStatusUpdate
-from src.repository import author as repository_author
+from src.database.models import User
+from src.repository import user as repository_users
+from src.services.auth import auth_service
+from src.conf.config import config
+from src.schemas import UserDb
 
-router = APIRouter(prefix='/author', tags=["author"])
-
-@router.get("/", response_model=List[AuthorResponse])
-async def read_authors(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    authors = await repository_author.get_authors(skip, limit, db)
-    return authors
+router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.get("/{author_id}", response_model=AuthorResponse)
-async def read_author(author_id: int, db: Session = Depends(get_db)):
-    author = await repository_author.get_author(author_id, db)
-    if author is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Author not found")
-    return author
+@router.get("/me/", response_model=UserDb)
+async def read_users_me(user: User = Depends(auth_service.get_current_user)):
+    """
+    Read users me
+    :param user: User.
+    :type user: str
+    """
+    return user
 
 
-@router.post("/", response_model=AuthorResponse)
-async def create_author(body: AuthorBase, db: Session = Depends(get_db)):
-    return await repository_author.create_author(body, db)
+@router.patch('/avatar', response_model=UserDb)
+async def update_avatar_user(file: UploadFile = File(), user: User = Depends(auth_service.get_current_user),
+                             db: Session = Depends(get_db)):
+    """
+    Update avatar user
+    param file: Contact details.
+    type: str
+    :param user: User.
+    :type user: str
+    param db: The database session
+    type: Session
+    """
+    cloudinary.config(
+        cloud_name=config.CLD_NAME,
+        api_key=config.CLD_API_KEY,
+        api_secret=config.CLD_API_SECRET,
+        secure=True
+    )
 
-
-@router.put("/{author_id}", response_model=AuthorResponse)
-async def update_author(body: AuthorBase, author_id: int, db: Session = Depends(get_db)):
-    author = await repository_author.update_author(author_id, body, db)
-    if author is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="author not found")
-    return author
-
-
-@router.patch("/{author_id}", response_model=AuthorResponse)
-async def update_status_author(body: AuthorStatusUpdate, author_id: int, db: Session = Depends(get_db)):
-    author = await repository_author.update_status_author(author_id, body, db)
-    if author is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Author not found")
-    return author
-
-
-@router.delete("/{author_id}", response_model=AuthorResponse)
-async def remove_author(author_id: int, db: Session = Depends(get_db)):
-    author = await repository_author.remove_author(author_id, db)
-    if author is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Author not found")
-    return author
+    r = cloudinary.uploader.upload(file.file, public_id=f'NotesApp/{user.username}', overwrite=True)
+    src_url = cloudinary.CloudinaryImage(f'NotesApp/{user.username}')\
+                        .build_url(width=250, height=250, crop='fill', version=r.get('version'))
+    user = await repository_users.update_avatar(user.email, src_url, db)
+    return user

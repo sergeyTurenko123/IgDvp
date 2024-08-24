@@ -1,6 +1,6 @@
 from typing import List
-
-from fastapi import APIRouter, HTTPException, Depends, status, Response
+import pathlib
+from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File
 from sqlalchemy.orm import Session
 
 from src.database.db import get_db
@@ -24,6 +24,13 @@ async def read_quote(quote_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="quote not found")
     return quote
 
+@router.post("/uploadfile/")
+async def create_upload_file(file: UploadFile = File()):
+    pathlib.Path("uploads").mkdir(exist_ok=True)
+    file_path = f"uploads/{file.filename}"
+    with open(file_path, "wb") as f:
+        f.write(await file.read())
+    return {"file_path": file_path}
 
 @router.post("/", response_model=QuoteResponse, status_code=status.HTTP_201_CREATED)
 async def create_quote(body: QuoteModel, db: Session = Depends(get_db)):
