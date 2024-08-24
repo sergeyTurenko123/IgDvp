@@ -36,6 +36,7 @@ class Photos(Base):
     __tablename__ = "photos"
     id = Column(Integer, primary_key=True)
     photo = Column(String(500), nullable=True)
+    description = Column(String(500), nullable=True)
     tags = relationship("Tag", secondary=photos_m2m_tag, backref="photos")
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = relationship('Users', backref='photos')
@@ -46,6 +47,6 @@ class Comments(Base):
     id = Column(Integer, primary_key=True)
     comment = Column(String(250), nullable=True)
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = relationship('Users', backref='comments')
+    user = relationship('Users', backref='photos')
     photo_id = Column(Integer, ForeignKey('photos.id', ondelete='CASCADE'), nullable=False)
     user = relationship('Photos', backref='comments')
