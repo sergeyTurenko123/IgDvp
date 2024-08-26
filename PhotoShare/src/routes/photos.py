@@ -26,7 +26,7 @@ async def read_photo(photo_id: int, db: Session = Depends(get_db)):
 
 @router.post("/", response_model=PhotoResponse, status_code=status.HTTP_201_CREATED)
 async def create_photo(body: PhotoModel, file: UploadFile = File(), db: Session = Depends(get_db)):
-    return await repository_photo.create_photo(body, r, db)
+    return await repository_photo.create_photo(body, file, db)
 
 @router.put("/{photo_id}", response_model=PhotoResponse)
 async def update_photo(body: PhotoUpdate, photo_id: int, db: Session = Depends(get_db)):
