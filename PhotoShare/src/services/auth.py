@@ -7,7 +7,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.db import get_db
-from src.repository import user as repository_user
+from src.repository import users as repository_user
 from src.conf.config import config
 
 
