@@ -13,6 +13,34 @@ class TagResponse(TagModel):
 
     class Config:
         orm_mode = True
+        
+        
+class NoteBase(BaseModel):
+    title: str = Field(max_length=50)
+    description: str = Field(max_length=150)
+    done: Optional[bool] = None
+
+
+class NoteModel(NoteBase):
+    tags: List[int]
+
+
+class NoteUpdate(NoteModel):
+    done: bool
+
+
+class NoteStatusUpdate(BaseModel):
+    done: bool
+
+
+class NoteResponse(NoteBase):
+    id: int
+    created_at: datetime
+    tags: List[TagResponse]
+
+    class Config:
+        orm_mode = True
+
 
 class UserModel(BaseModel):
     username: str = Field(min_length=4, max_length=16)

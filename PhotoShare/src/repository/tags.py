@@ -1,8 +1,9 @@
 from typing import List
 
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 
-from src.database.models import Tag
+from src.database.models import Tag, User
 from src.schemas import TagModel
 
 

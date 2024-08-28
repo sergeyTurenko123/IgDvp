@@ -1,6 +1,6 @@
 from typing import Optional
 import redis
-from jose import jwt, JWTError
+from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
