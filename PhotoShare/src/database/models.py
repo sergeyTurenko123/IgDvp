@@ -20,10 +20,10 @@ class Users(Base):
 
 
 photos_m2m_tag = Table(
-    "photos_m2m_tag",
+    "photo_m2m_tag",
     Base.metadata,
     Column("id", Integer, primary_key=True),
-    Column("photos_id", Integer, ForeignKey("photos.id", ondelete="CASCADE")),
+    Column("photo_id", Integer, ForeignKey("photo.id", ondelete="CASCADE")),
     Column("tag_id", Integer, ForeignKey("tag.id", ondelete="CASCADE")),
 )
 
@@ -33,20 +33,20 @@ class Tag(Base):
     name = Column(String(25), nullable=False, unique=True)
 
 class Photos(Base):
-    __tablename__ = "photos"
+    __tablename__ = "photo"
     id = Column(Integer, primary_key=True)
     photo = Column(String(500), nullable=True)
     description = Column(String(500), nullable=True)
-    tags = relationship("Tag", secondary=photos_m2m_tag, backref="photos")
+    tags = relationship("Tag", secondary=photos_m2m_tag, backref="photo")
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = relationship('Users', backref='photos')
+    user = relationship('Users', backref='photo')
     created_at = Column('created_at', DateTime, default=func.now())
 
 class Comments(Base):
-    __tablename__ = "comments"
+    __tablename__ = "comment"
     id = Column(Integer, primary_key=True)
     comment = Column(String(250), nullable=True)
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = relationship('Users', backref='photos')
-    photo_id = Column(Integer, ForeignKey('photos.id', ondelete='CASCADE'), nullable=False)
-    user = relationship('Photos', backref='comments')
+    user = relationship('Users', backref='photo')
+    photo_id = Column(Integer, ForeignKey('photo.id', ondelete='CASCADE'), nullable=False)
+    user = relationship('Photos', backref='comment')

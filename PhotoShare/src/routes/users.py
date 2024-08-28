@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, UploadFile, File
 from sqlalchemy.orm import Session
 import cloudinary
 import cloudinary.uploader
+import datetime
 
 from src.database.db import get_db
 from src.database.models import Users
@@ -42,8 +43,8 @@ async def update_avatar_user(file: UploadFile = File(), user: Users = Depends(au
         secure=True
     )
 
-    r = cloudinary.uploader.upload(file.file, public_id=f'NotesApp/{user.username}', overwrite=True)
-    src_url = cloudinary.CloudinaryImage(f'NotesApp/{user.username}')\
+    r = cloudinary.uploader.upload(file.file, public_id=f'UserApp/{user.username}', overwrite=True)
+    src_url = cloudinary.CloudinaryImage(f'UserApp/{user.username}')\
                         .build_url(width=250, height=250, crop='fill', version=r.get('version'))
     user = await repository_user.update_avatar(user.email, src_url, db)
     return user

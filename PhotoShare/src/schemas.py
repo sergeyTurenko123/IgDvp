@@ -1,8 +1,7 @@
 from datetime import datetime
-from typing import List, Optional
-from pydantic import BaseModel, Field, EmailStr, model_validator
-from fastapi import UploadFile, File, Form
-from dataclasses import dataclass
+from typing import List
+from pydantic import BaseModel, Field, EmailStr
+from fastapi import Form
 
 class TagModel(BaseModel):
     name: str = Field(max_length=25)
@@ -49,8 +48,7 @@ class PhotoBase(BaseModel):
     description: str = Field(max_length=500)    
   
 class PhotoModel(PhotoBase):
-    tags: List[int]
-    user_id: int
+    tags: List[str] = []
 
 class PhotoUpdate(PhotoModel):
     done: bool
