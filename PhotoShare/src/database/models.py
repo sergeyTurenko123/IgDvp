@@ -40,6 +40,7 @@ class Photos(Base):
     tags = relationship("Tag", secondary=photos_m2m_tag, backref="photo")
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     user = relationship('Users', backref='photo')
+    done = Column(Boolean, default=False)
     created_at = Column('created_at', DateTime, default=func.now())
 
 class Comments(Base):

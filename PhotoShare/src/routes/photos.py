@@ -1,25 +1,34 @@
 from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File, Form
 from sqlalchemy.orm import Session
-from src.conf.config import config
-import cloudinary.uploader
-from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime
 from typing import List
-from pydantic import Field
+import cloudinary
+import cloudinary.uploader
+from datetime import datetime
 
-from src.database.models import Users, Tag
+from src.conf.config import config
+from src.database.models import Users
 from src.services.auth import auth_service
 from src.database.db import get_db
-from src.schemas import PhotoModel, PhotoUpdate, PhotoStatusUpdate, PhotoResponse, TagResponse
+from src.schemas import PhotoModel, PhotoStatusUpdate, PhotoResponse
 from src.repository import photos as repository_photo
 
 router = APIRouter(prefix='/photo', tags=["photo"])
 
 
 @router.get("/", response_model=List[PhotoResponse])
-async def read_photos(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+async def read_photos(
+    skip: int = 0, 
+    limit: int = 100, 
+    db: Session = Depends(get_db)):
     photos = await repository_photo.get_photos(skip, limit, db)
     return photos
+    
+@router.get("/{tags}", response_model=List[PhotoResponse])
+async def read_photos( 
+    tag: str | None=None,
+    db: Session = Depends(get_db)):
+    photo = await repository_photo.get_search_by_tags(tag, db)
+    return photo
 
 @router.get("/{photo_id}", response_model=PhotoResponse)
 async def read_photo(photo_id: int, db: Session = Depends(get_db)):
@@ -28,10 +37,12 @@ async def read_photo(photo_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
     return photo
 
+
+
 @router.post("/", response_model=PhotoResponse, status_code=status.HTTP_201_CREATED)
 async def create_photo(
         description: str = Form(...),
-        tags: List[int] = Form(...),
+        tags: int = Form(),
         file: UploadFile = File(...),
         db: Session = Depends(get_db), current_user: Users = Depends(auth_service.get_current_user)):
     cloudinary.config(
@@ -45,18 +56,25 @@ async def create_photo(
     photo_url = cloudinary.CloudinaryImage(public_id).build_url(
         version=r.get("version")
     )
-    body = PhotoModel(description=description, tags=tags)
+    tags_list = tags.split(",")
+    body = PhotoModel(description=description, tags=tags_list)
     image = await repository_photo.create_image_repository(body, photo_url, current_user, db)
     return image
 
 @router.put("/{photo_id}", response_model=PhotoResponse)
-async def update_photo(body: PhotoUpdate, photo_id: int, db: Session = Depends(get_db),
-                       current_user: Users = Depends(auth_service.get_current_user)):
-    if current_user:
-        photo = await repository_photo.update_photo(photo_id, body, db)
-        if photo is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
-        return photo
+async def update_photo(
+    photo_id: int,
+    description: str = Form(...), 
+    tags: str = Form(), 
+    db: Session = Depends(get_db), 
+    current_user: Users = Depends(auth_service.get_current_user)):
+
+    tags_list = tags.split(",")
+    body = PhotoModel(description=description, tags=tags_list)
+    photo = await repository_photo.update_photo(photo_id, body, current_user, db)
+    if photo is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
+    return photo
 
 
 @router.patch("/{photo_id}", response_model=PhotoResponse)
