@@ -48,7 +48,7 @@ class PhotoBase(BaseModel):
     description: str = Field(max_length=500)    
   
 class PhotoModel(PhotoBase):
-    tags: List[int]
+    tags: List[str]
 
 class PhotoUpdate(PhotoModel):
     done: bool

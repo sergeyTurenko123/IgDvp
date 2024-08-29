@@ -6,11 +6,12 @@ import cloudinary.uploader
 from datetime import datetime
 
 from src.conf.config import config
-from src.database.models import Users
+from src.database.models import Users, Tag
 from src.services.auth import auth_service
 from src.database.db import get_db
 from src.schemas import PhotoModel, PhotoStatusUpdate, PhotoResponse
 from src.repository import photos as repository_photo
+from src.repository import tags as repository_tags
 
 router = APIRouter(prefix='/photo', tags=["photo"])
 
@@ -42,7 +43,7 @@ async def read_photo(photo_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=PhotoResponse, status_code=status.HTTP_201_CREATED)
 async def create_photo(
         description: str = Form(...),
-        tags: int = Form(),
+        tags: List[str] = Form([]),
         file: UploadFile = File(...),
         db: Session = Depends(get_db), current_user: Users = Depends(auth_service.get_current_user)):
     cloudinary.config(
@@ -56,8 +57,24 @@ async def create_photo(
     photo_url = cloudinary.CloudinaryImage(public_id).build_url(
         version=r.get("version")
     )
-    tags_list = tags.split(",")
-    body = PhotoModel(description=description, tags=tags_list)
+    for tags_str in tags:
+            tag_list = tags_str.split(",")
+            tag_count = len(tag_list)
+
+            if tag_count>5:
+                raise HTTPException(
+                        status_code=400, detail="Maximum number of tags - 5"
+                )
+            for tag_name in tag_list:
+                tag_name = tag_name.strip()
+                tag = db.query(Tag).filter_by(name=tag_name).first()
+                if tag is None:
+                    tag = Tag(name=tag_name)
+                    db.add(tag)
+                    db.commit()
+                    db.refresh(tag)
+
+    body = PhotoModel(description=description, tags=tag_list)
     image = await repository_photo.create_image_repository(body, photo_url, current_user, db)
     return image
 
@@ -65,12 +82,28 @@ async def create_photo(
 async def update_photo(
     photo_id: int,
     description: str = Form(...), 
-    tags: str = Form(), 
+    tags: List[str] = Form([]), 
     db: Session = Depends(get_db), 
     current_user: Users = Depends(auth_service.get_current_user)):
+    
+    for tags_str in tags:
+            tag_list = tags_str.split(",")
+            tag_count = len(tag_list)
 
-    tags_list = tags.split(",")
-    body = PhotoModel(description=description, tags=tags_list)
+            if tag_count>5:
+                raise HTTPException(
+                        status_code=400, detail="Maximum number of tags - 5"
+                )
+            for tag_name in tag_list:
+                tag_name = tag_name.strip()
+                tag = db.query(Tag).filter_by(name=tag_name).first()
+                if tag is None:
+                    tag = Tag(name=tag_name)
+                    db.add(tag)
+                    db.commit()
+                    db.refresh(tag)
+    
+    body = PhotoModel(description=description, tags=tag_list)
     photo = await repository_photo.update_photo(photo_id, body, current_user, db)
     if photo is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
