@@ -66,3 +66,12 @@ class PhotoResponse(BaseModel):
     
     class Config:
         orm_mode = True
+
+class CloudinarImage(BaseModel):
+    rounding: str
+    sharpen: str
+    repaint_the_T_shirt: str
+    restore: str
+    enhance: str
+    optimization: str
+

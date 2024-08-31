@@ -11,7 +11,6 @@ from src.services.auth import auth_service
 from src.database.db import get_db
 from src.schemas import PhotoModel, PhotoStatusUpdate, PhotoResponse
 from src.repository import photos as repository_photo
-from src.repository import tags as repository_tags
 
 router = APIRouter(prefix='/photo', tags=["photo"])
 
@@ -38,14 +37,13 @@ async def read_photo(photo_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
     return photo
 
-
-
 @router.post("/", response_model=PhotoResponse, status_code=status.HTTP_201_CREATED)
 async def create_photo(
         description: str = Form(...),
-        tags: List[str] = Form([]),
+        tags: List[int] = Form([]),
         file: UploadFile = File(...),
-        db: Session = Depends(get_db), current_user: Users = Depends(auth_service.get_current_user)):
+        db: Session = Depends(get_db), 
+        current_user: Users = Depends(auth_service.get_current_user)):
     cloudinary.config(
         cloud_name=config.CLD_NAME,
         api_key=config.CLD_API_KEY,
@@ -81,8 +79,8 @@ async def create_photo(
 @router.put("/{photo_id}", response_model=PhotoResponse)
 async def update_photo(
     photo_id: int,
-    description: str = Form(...), 
-    tags: List[str] = Form([]), 
+    description: str = Form(...) ,
+    tags: List[int] = Form([]), 
     db: Session = Depends(get_db), 
     current_user: Users = Depends(auth_service.get_current_user)):
     
@@ -108,7 +106,6 @@ async def update_photo(
     if photo is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
     return photo
-
 
 @router.patch("/{photo_id}", response_model=PhotoResponse)
 async def update_status_photo(body: PhotoStatusUpdate, photo_id: int, db: Session = Depends(get_db),
