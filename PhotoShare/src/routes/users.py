@@ -50,5 +50,3 @@ async def update_avatar_user(file: UploadFile = File(), user: Users = Depends(au
     
     user = await repository_user.update_avatar(user.email, srcURL, db)
     return user
-# , version=r.get('version')
-

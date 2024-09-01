@@ -50,9 +50,13 @@ async def create_photo(
         api_secret=config.CLD_API_SECRET,
         secure=True
     )
-    # f'photoApp/{current_user.username}_{datetime.now().strftime("%Y%m%d%H%M%S")}'
-    public_id = description
-    r = cloudinary.uploader.upload(file.file, public_id=public_id, overwrite=False)
+    photo = db.query(Photos).filter(Photos.description == description).filter(Photos.user_id==current_user.id).first()
+    if photo:
+        raise HTTPException(
+                        status_code=400, detail="description exists"
+                )
+    public_id = f'Phothoapp/{description}_{current_user.id}'
+    r = cloudinary.uploader.upload(file.file, public_id=public_id, overwrite=True)
     photo_url = cloudinary.CloudinaryImage(public_id).build_url(
         version=r.get("version")
     )

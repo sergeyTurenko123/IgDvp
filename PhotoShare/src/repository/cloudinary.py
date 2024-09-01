@@ -20,7 +20,7 @@ async def cloudinary_editor(photo_id, cloudinary_action, user:Users, db: Session
         secure=True
     )
     # f'photoApp/{user.username}_{datetime.now().strftime("%Y%m%d%H%M%S")}'
-    public_id = photo.description
+    public_id = f'Photoapp/{photo.description}_{user.id}'
     if cloudinary_action == 'rounding':
         r = cloudinary.uploader.upload(photo_photo, public_id=public_id, overwrite=True)
         photo_url = cloudinary.CloudinaryImage(public_id).build_url(transformation=[

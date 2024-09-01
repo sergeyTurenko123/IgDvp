@@ -70,7 +70,7 @@ class PhotoResponse(BaseModel):
 class CloudinarImage(BaseModel):
     rounding: str | None = None
     sharpen: str | None = None
-    repaint_the_T_shir: str | None = None
+    repaint_the_T_shirt: str | None = None
     restore: str | None = None
     enhance: str | None = None
     optimization: str | None = None
