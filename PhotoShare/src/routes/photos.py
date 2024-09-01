@@ -30,11 +30,10 @@ async def read_photos(
     photo = await repository_photo.get_search_by_tags(tag, db)
     return photo
 
-@router.get("/{photo_id}", response_model=PhotoResponse)
-async def read_photo(photo_id: int, db: Session = Depends(get_db)):
+@router.get("/photo/", response_model=PhotoResponse)
+async def read_photo(photo_id: int, 
+                     db: Session = Depends(get_db)):
     photo = await repository_photo.get_photo(photo_id, db)
-    if photo is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
     return photo
 
 @router.post("/", response_model=PhotoResponse, status_code=status.HTTP_201_CREATED)

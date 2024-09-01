@@ -75,3 +75,11 @@ class CloudinarImage(BaseModel):
     enhance: str | None = None
     optimization: str | None = None
 
+class QrcodeModel(BaseModel):
+    qrcode: str
+
+class QrcodeResponse(QrcodeModel):
+    id: int
+
+    class Config:
+        orm_mode = True

@@ -2,16 +2,16 @@ from typing import List
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
-from src.database.models import Photos, Tag, Users
+from src.database.models import Photos, Tag, Users, photos_m2m_tag
 from src.schemas import PhotoUpdate, PhotoStatusUpdate, PhotoModel
 
 async def get_photos(skip: int, limit: int, db: Session) -> List[Photos]:
     return db.query(Photos).offset(skip).limit(limit).all()
 
 async def get_search_by_tags(tag: str, db: Session,) -> List[Photos]:
-    tag_name = db.query(Tag).filter(Tag.name==tag).all()
-    photos = db.query(Photos).filter(Tag.name==tag).all()
-    if not tag_name:
+    tags = db.query(Tag).filter(Tag.name==tag).first()
+    photos = db.query(Photos).filter(Photos.tags.contains(tags)).all()
+    if not tags:
         raise HTTPException(status_code=404, detail="tag not found")
     return photos
 

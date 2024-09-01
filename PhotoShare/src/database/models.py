@@ -56,5 +56,5 @@ class Qrcode(Base):
     __tablename__ = "qrcode"
     id = Column(Integer, primary_key=True)
     qrcode = Column(String(250), nullable=True)
-    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = relationship('Users', backref='qrcode')
+    user_id = Column(Integer, ForeignKey('photo.id', ondelete='CASCADE'), nullable=False)
+    user = relationship('Photos', backref='qrcode')

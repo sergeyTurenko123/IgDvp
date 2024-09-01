@@ -1,10 +1,9 @@
 import cloudinary
 import cloudinary.uploader
-from cloudinary.utils import cloudinary_url
-from typing import List
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
-from datetime import datetime
+import qrcode
+from qrcode import ERROR_CORRECT_L, constants
+import qrcode.image.svg
 
 from src.database.models import Photos, Users
 from src.schemas import CloudinarImage
@@ -49,3 +48,19 @@ async def cloudinary_editor(photo_id, cloudinary_action, user:Users, db: Session
         photo.photo = photo_url
         db.commit()
     return photo
+
+async def qrcode_cread(photo_id, user:Users, db: Session):
+    photo = db.query(Photos).filter(Photos.id == photo_id).filter(Photos.user_id==user.id).first()
+    photo_photo = photo.photo
+    qr = qrcode.QRCode(
+    version=None,
+    error_correction=constants.ERROR_CORRECT_L,
+    box_size=10,
+    border=4)
+
+    qr.add_data(photo_photo)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    
+    print(img.to_string(encoding='unicode'))
+    return img

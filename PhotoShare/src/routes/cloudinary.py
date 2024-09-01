@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Body, Depends, status, HTTPException
-from src.schemas import PhotoResponse, CloudinarImage
 from sqlalchemy.orm import Session
 
+from src.schemas import PhotoResponse, CloudinarImage, QrcodeResponse
 from src.repository import cloudinary as repository_cloudinary
 from src.database.db import get_db
 from src.database.models import Users
@@ -50,4 +50,11 @@ async def cloudinary_editor(
             if photo is None:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
             return photo
-            
+
+@router.post("/{photo_id}", response_model=QrcodeResponse)
+async def qrcode_cread(
+    photo_id: int,
+    db: Session = Depends(get_db), 
+    current_user: Users = Depends(auth_service.get_current_user)):
+    img = await repository_cloudinary.qrcode_cread(photo_id, current_user, db)
+    return img      
