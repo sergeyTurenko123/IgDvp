@@ -45,9 +45,12 @@ class RequestEmail(BaseModel):
     email: EmailStr
 
 class PhotoBase(BaseModel):
-    description: str = Field(max_length=500)    
+    id: int
+    description: str
+    photo: str
   
 class PhotoModel(PhotoBase):
+    description: str
     tags: List[str]
 
 class PhotoUpdate(PhotoModel):
@@ -83,3 +86,10 @@ class QrcodeResponse(QrcodeModel):
 
     class Config:
         orm_mode = True
+
+class User_Photo(BaseModel):
+    id: int
+    username: str
+    created_at: datetime
+    avatar: str
+    photo: List[PhotoBase]

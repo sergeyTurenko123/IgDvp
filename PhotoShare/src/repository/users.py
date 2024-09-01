@@ -1,7 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from libgravatar import Gravatar
-from src.database.models import Users
+from fastapi import HTTPException
+
+from src.database.models import Users, Photos
 from src.schemas import UserModel
 
 
@@ -25,6 +27,7 @@ async def update_avatar(email: str, url: str | None, db: AsyncSession) -> Users:
     :param db: The database session.
     :type db: Session
     """
+    
     user = await get_user_by_email(email, db)
     user.avatar = url
     db.commit()
@@ -75,3 +78,10 @@ async def confirmed_email(email: str, db: Session) -> None:
     user = await get_user_by_email(email, db)
     user.confirmed = True
     db.commit()
+
+async def get_user(user_name, db: Session) -> Users:
+    user = db.query(Users).filter(Users.username==user_name).first()
+    # photo = db.query(Photos).filter(Photos.user_id==user_name).all()
+    if not user:
+        raise HTTPException(status_code=404, detail="user not found")
+    return (user)

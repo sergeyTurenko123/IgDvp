@@ -30,7 +30,7 @@ async def read_photos(
     photo = await repository_photo.get_search_by_tags(tag, db)
     return photo
 
-@router.get("/photo/", response_model=PhotoResponse)
+@router.get("/{photo_id}", response_model=PhotoResponse)
 async def read_photo(photo_id: int, 
                      db: Session = Depends(get_db)):
     photo = await repository_photo.get_photo(photo_id, db)

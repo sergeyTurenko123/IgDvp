@@ -9,24 +9,24 @@ from src.database.models import Users
 from src.repository import users as repository_user
 from src.services.auth import auth_service
 from src.conf.config import config
-from src.schemas import UserDb
+from src.schemas import UserDb, User_Photo
 
 router = APIRouter(prefix="/users", tags=["users"])
 
+@router.get("/{user_name}", response_model=User_Photo)
+async def read_users_me(user_name: str, db: Session = Depends(get_db)):
+    user = await repository_user.get_user(user_name, db)
+    return user
 
 @router.get("/me/", response_model=UserDb)
 async def read_users_me(user: Users = Depends(auth_service.get_current_user)):
-    """
-    Read users me
-    :param user: User.
-    :type user: str
-    """
     return user
 
-
 @router.patch('/avatar', response_model=UserDb)
-async def update_avatar_user(file: UploadFile = File(), user: Users = Depends(auth_service.get_current_user),
-                             db: Session = Depends(get_db)):
+async def update_avatar_user(
+    file: UploadFile = File(), 
+    user: Users = Depends(auth_service.get_current_user),
+    db: Session = Depends(get_db)):
     """
     Update avatar user
     param file: Contact details.
