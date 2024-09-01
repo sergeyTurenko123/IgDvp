@@ -16,7 +16,10 @@ async def get_search_by_tags(tag: str, db: Session,) -> List[Photos]:
     return photos
 
 async def get_photo(photo_id: int, db: Session) -> Photos:
-    return db.query(Photos).filter(Photos.id == photo_id).first()
+    photo = db.query(Photos).filter(Photos.id == photo_id).first()
+    if photo is None:
+        raise HTTPException(status_code=404, detail="photo not found")
+    return photo
 
 async def create_image_repository(body: PhotoModel, photo_url: str, user:Users, db: Session) -> Photos:
     tags = db.query(Tag).filter(Tag.name.in_(body.tags)).all()        

@@ -40,7 +40,7 @@ async def read_photo(photo_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=PhotoResponse, status_code=status.HTTP_201_CREATED)
 async def create_photo(
         description: str = Form(...),
-        tags: List[int] = Form([]),
+        tags: List[str] = Form([]),
         file: UploadFile = File(...),
         db: Session = Depends(get_db), 
         current_user: Users = Depends(auth_service.get_current_user)):

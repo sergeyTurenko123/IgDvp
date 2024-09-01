@@ -42,13 +42,13 @@ async def update_avatar_user(file: UploadFile = File(), user: Users = Depends(au
         api_secret=config.CLD_API_SECRET,
         secure=True
     )
-   
-    r = cloudinary.uploader.upload(file.file, public_id=f'UserApp/{user.username}', overwrite=True)
-    src_url = cloudinary.CloudinaryImage(f'UserApp/{user.username}').image(transformation=[
-  {'aspect_ratio': "1:1", 'gravity': "auto", 'width': 500, 'crop': "auto"},
-  {'radius': "max"}], version=r.get('version'))
     
-    user = await repository_user.update_avatar(user.email, src_url, db)
+    r = cloudinary.uploader.upload(file.file, public_id=f'UserApp/{user.username}', overwrite=True)
+    srcURL = CloudinaryImage(f'UserApp/{user.username}').build_url(transformation=[
+    {'aspect_ratio': "1:1", 'gravity': "auto", 'width': 500, 'crop': "auto"},
+    {'radius': "max"}])
+    
+    user = await repository_user.update_avatar(user.email, srcURL, db)
     return user
-
+# , version=r.get('version')
 

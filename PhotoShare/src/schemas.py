@@ -68,10 +68,10 @@ class PhotoResponse(BaseModel):
         orm_mode = True
 
 class CloudinarImage(BaseModel):
-    rounding: str
-    sharpen: str
-    repaint_the_T_shirt: str
-    restore: str
-    enhance: str
-    optimization: str
+    rounding: str | None = None
+    sharpen: str | None = None
+    repaint_the_T_shir: str | None = None
+    restore: str | None = None
+    enhance: str | None = None
+    optimization: str | None = None
 
