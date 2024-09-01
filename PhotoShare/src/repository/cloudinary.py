@@ -13,14 +13,14 @@ from src.conf.config import config
 async def cloudinary_editor(photo_id, cloudinary_action, user:Users, db: Session):
     photo = db.query(Photos).filter(Photos.id == photo_id).filter(Photos.user_id==user.id).first()
     photo_photo = photo.photo
-    photo_name = photo_photo
     cloudinary.config(
         cloud_name=config.CLD_NAME,
         api_key=config.CLD_API_KEY,
         api_secret=config.CLD_API_SECRET,
         secure=True
     )
-    public_id = f'photoApp/{user.username}_{datetime.now().strftime("%Y%m%d%H%M%S")}'
+    # f'photoApp/{user.username}_{datetime.now().strftime("%Y%m%d%H%M%S")}'
+    public_id = photo.description
     if cloudinary_action == 'rounding':
         r = cloudinary.uploader.upload(photo_photo, public_id=public_id, overwrite=True)
         photo_url = cloudinary.CloudinaryImage(public_id).build_url(transformation=[

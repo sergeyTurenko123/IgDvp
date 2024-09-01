@@ -6,7 +6,7 @@ import cloudinary.uploader
 from datetime import datetime
 
 from src.conf.config import config
-from src.database.models import Users, Tag
+from src.database.models import Users, Tag, Photos
 from src.services.auth import auth_service
 from src.database.db import get_db
 from src.schemas import PhotoModel, PhotoStatusUpdate, PhotoResponse
@@ -50,7 +50,8 @@ async def create_photo(
         api_secret=config.CLD_API_SECRET,
         secure=True
     )
-    public_id = f'photoApp/{current_user.username}_{datetime.now().strftime("%Y%m%d%H%M%S")}'
+    # f'photoApp/{current_user.username}_{datetime.now().strftime("%Y%m%d%H%M%S")}'
+    public_id = description
     r = cloudinary.uploader.upload(file.file, public_id=public_id, overwrite=False)
     photo_url = cloudinary.CloudinaryImage(public_id).build_url(
         version=r.get("version")
