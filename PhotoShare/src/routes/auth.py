@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from src.services.email import send_email
 from src.database.db import get_db
 from src.schemas import UserModel, UserResponse, TokenModel, RequestEmail
-from src.repository import user as repository_users
+from src.repository import users as repository_users
 from src.services.auth import auth_service
 
 router = APIRouter(prefix='/auth', tags=["auth"])

@@ -5,7 +5,7 @@ import cloudinary.uploader
 
 from src.database.db import get_db
 from src.database.models import Users
-from src.repository import user as repository_user
+from src.repository import users as repository_user
 from src.services.auth import auth_service
 from src.conf.config import config
 from src.schemas import UserDb

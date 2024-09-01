@@ -1,13 +1,13 @@
 from fastapi import FastAPI
 
-from src.routes import photo, tags, user, auth, comments
+from src.routes import photos, tags, users, auth, comments
 
 app = FastAPI()
 
 app.include_router(auth.router, prefix='/api')
 app.include_router(tags.router, prefix='/api')
-app.include_router(photo.router, prefix='/api')
-app.include_router(user.router, prefix='/api')
+app.include_router(photos.router, prefix='/api')
+app.include_router(users.router, prefix='/api')
 app.include_router(comments.router, prefix='/api')
 
 

@@ -7,7 +7,7 @@ from src.database.models import Users
 from src.services.auth import auth_service
 from src.database.db import get_db
 from src.schemas import PhotoModel, PhotoUpdate, PhotoStatusUpdate, PhotoResponse
-from src.repository import photo as repository_photo
+from src.repository import photos as repository_photo
 
 router = APIRouter(prefix='/photo', tags=["photo"])
 
@@ -25,8 +25,8 @@ async def read_photo(photo_id: int, db: Session = Depends(get_db)):
     return photo
 
 @router.post("/", response_model=PhotoResponse, status_code=status.HTTP_201_CREATED)
-async def create_photo(body: PhotoModel, db: Session = Depends(get_db)):
-    return await repository_photo.create_photo(body, db)
+async def create_photo(body: PhotoModel, file: UploadFile = File(), db: Session = Depends(get_db)):
+    return await repository_photo.create_photo(body, file, db)
 
 @router.put("/{photo_id}", response_model=PhotoResponse)
 async def update_photo(body: PhotoUpdate, photo_id: int, db: Session = Depends(get_db)):
