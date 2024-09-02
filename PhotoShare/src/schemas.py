@@ -1,8 +1,8 @@
 from datetime import datetime
-from typing import List, Optional
-from pydantic import BaseModel, Field, EmailStr, model_validator
-from fastapi import UploadFile, File, Form
-from dataclasses import dataclass
+from typing import List
+from pydantic import BaseModel, Field, EmailStr
+
+from src.database.models import Tag
 
 class TagModel(BaseModel):
     name: str = Field(max_length=25)
@@ -44,13 +44,14 @@ class TokenModel(BaseModel):
 class RequestEmail(BaseModel):
     email: EmailStr
 
-        
 class PhotoBase(BaseModel):
-    description: str = Field(max_length=500)    
+    id: int
+    description: str
+    photo: str
   
-class PhotoModel(PhotoBase):
-    tags: List[int]
-    user_id: int
+class PhotoModel(BaseModel):
+    description: str = Field(max_length=500)
+    tags: List[str]
 
 class PhotoUpdate(PhotoModel):
     done: bool
@@ -68,3 +69,27 @@ class PhotoResponse(BaseModel):
     
     class Config:
         orm_mode = True
+
+class CloudinarImage(BaseModel):
+    rounding: str | None = None
+    sharpen: str | None = None
+    repaint_the_T_shirt: str | None = None
+    restore: str | None = None
+    enhance: str | None = None
+    optimization: str | None = None
+
+class QrcodeModel(BaseModel):
+    qrcode_url: str
+
+class QrcodeResponse(QrcodeModel):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+class User_Photo(BaseModel):
+    id: int
+    username: str
+    created_at: datetime
+    avatar: str
+    photo: List[PhotoBase]
