@@ -19,7 +19,6 @@ class Users(Base):
     refresh_token = Column(String(255), nullable=True)
     confirmed = Column(Boolean, default=False)
 
-
 photos_m2m_tag = Table(
     "photo_m2m_tag",
     Base.metadata,

@@ -84,7 +84,7 @@ async def create_photo(
 async def update_photo(
     photo_id: int,
     description: str = Form(...) ,
-    tags: List[int] = Form([]), 
+    tags: List[str] = Form([]), 
     db: Session = Depends(get_db), 
     current_user: Users = Depends(auth_service.get_current_user)):
     
