@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File # type: ignore
+from sqlalchemy.orm import Session # type: ignore
 from src.conf.config import config
-import cloudinary.uploader
+import cloudinary.uploader # type: ignore
 
 from src.database.models import Users
 from src.services.auth import auth_service

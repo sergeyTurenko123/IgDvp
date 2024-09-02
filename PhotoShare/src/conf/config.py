@@ -1,9 +1,9 @@
 from typing import Any
-from pydantic import ConfigDict, field_validator, EmailStr
-from pydantic_settings import BaseSettings
+from pydantic import ConfigDict, field_validator, EmailStr # type: ignore
+from pydantic_settings import BaseSettings # type: ignore
 
 class Settings(BaseSettings):
-    DB_URL: str = "postgresql+psycopg2://postgres:11111111@localhost:postgres/postgres"
+    DB_URL: str = "postgresql+psycopg2://postgres:11111111@localhost:5432/postgres"
     SECRET_KEY_JWT: str = "postgress"
     ALGORITHM: str = "HS256"
     MAIL_USERNAME: EmailStr = "postgress"

@@ -1,6 +1,6 @@
 from typing import Optional
 import redis
-from jose import JWTError, jwt
+from jose import jwt, JWTError
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
@@ -40,6 +40,7 @@ class Auth:
         :type password: str
         """
         return self.pwd_context.hash(password)
+    
 
     # define a function to generate a new access token
     async def create_access_token(self, data: dict, expires_delta: Optional[float] = None):

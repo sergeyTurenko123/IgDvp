@@ -24,7 +24,7 @@ python-multipart = "^0.0.9"
 fastapi-mail = "^1.4.1"
 bcrypt = "^4.2.0"
 pytest = "^8.3.2"
-
+passlib = "^1.7.4"
 
 [build-system]
 requires = ["poetry-core"]

@@ -1,0 +1,27 @@
+#version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "${APP_HOST_PORT}:8000"  # Використання змінної середовища для порту
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  db:
+    image: postgres:15 
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT}:5432"  # Використання змінної середовища для порту бази даних
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
