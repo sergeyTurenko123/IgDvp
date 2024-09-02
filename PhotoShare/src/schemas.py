@@ -93,3 +93,15 @@ class User_Photo(BaseModel):
     created_at: datetime
     avatar: str
     photo: List[PhotoBase]
+
+class CommentsBase(BaseModel):
+    comment: str = Field(max_length=50)
+
+class CommentsResponse(CommentsBase):
+    id: int
+    photo_id: int
+    user_id: int
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
