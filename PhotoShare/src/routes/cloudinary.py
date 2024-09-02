@@ -51,7 +51,7 @@ async def cloudinary_editor(
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
             return photo
 
-@router.post("/{photo_id}", response_model=QrcodeResponse)
+@router.get("/{photo_id}", response_model=QrcodeResponse)
 async def qrcode_cread(
     photo_id: int,
     db: Session = Depends(get_db), 

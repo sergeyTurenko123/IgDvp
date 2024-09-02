@@ -2,8 +2,9 @@ from sqlalchemy import Column, Integer, String, func, Table, Boolean
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.sqltypes import DateTime
-from sqlalchemy.orm import relationship, Mapped, mapped_column
-from typing import List
+from sqlalchemy.orm import relationship
+
+from src.database.db import engine
 
 Base = declarative_base()
 
@@ -48,13 +49,15 @@ class Comments(Base):
     id = Column(Integer, primary_key=True)
     comment = Column(String(250), nullable=True)
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = relationship('Users', backref='photo')
+    user = relationship('Users', backref='comment')
     photo_id = Column(Integer, ForeignKey('photo.id', ondelete='CASCADE'), nullable=False)
-    user = relationship('Photos', backref='comment')
+    photo = relationship('Photos', backref='comment')
 
 class Qrcode(Base):
     __tablename__ = "qrcode"
     id = Column(Integer, primary_key=True)
-    qrcode = Column(String(250), nullable=True)
-    user_id = Column(Integer, ForeignKey('photo.id', ondelete='CASCADE'), nullable=False)
-    user = relationship('Photos', backref='qrcode')
+    qrcode_url = Column(String(250), nullable=True)
+    photo_id = Column(Integer, ForeignKey('photo.id', ondelete='CASCADE'), nullable=False)
+    photo = relationship('Photos', backref='qrcode')
+
+Base.metadata.create_all(bind=engine)

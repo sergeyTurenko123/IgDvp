@@ -49,8 +49,8 @@ class PhotoBase(BaseModel):
     description: str
     photo: str
   
-class PhotoModel(PhotoBase):
-    description: str
+class PhotoModel(BaseModel):
+    description: str = Field(max_length=500)
     tags: List[str]
 
 class PhotoUpdate(PhotoModel):
@@ -79,7 +79,7 @@ class CloudinarImage(BaseModel):
     optimization: str | None = None
 
 class QrcodeModel(BaseModel):
-    qrcode: str
+    qrcode_url: str
 
 class QrcodeResponse(QrcodeModel):
     id: int

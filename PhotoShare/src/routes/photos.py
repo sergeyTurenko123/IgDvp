@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 import cloudinary
 import cloudinary.uploader
-from datetime import datetime
+from fastapi_limiter.depends import RateLimiter
 
 from src.conf.config import config
 from src.database.models import Users, Tag, Photos
@@ -23,9 +23,9 @@ async def read_photos(
     photos = await repository_photo.get_photos(skip, limit, db)
     return photos
     
-@router.get("/{tags}", response_model=List[PhotoResponse])
+@router.get("/photo/", response_model=List[PhotoResponse])
 async def read_photos( 
-    tag: str | None=None,
+    tag: str,
     db: Session = Depends(get_db)):
     photo = await repository_photo.get_search_by_tags(tag, db)
     return photo

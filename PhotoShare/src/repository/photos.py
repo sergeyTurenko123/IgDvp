@@ -10,9 +10,9 @@ async def get_photos(skip: int, limit: int, db: Session) -> List[Photos]:
 
 async def get_search_by_tags(tag: str, db: Session,) -> List[Photos]:
     tags = db.query(Tag).filter(Tag.name==tag).first()
-    photos = db.query(Photos).filter(Photos.tags.contains(tags)).all()
     if not tags:
         raise HTTPException(status_code=404, detail="tag not found")
+    photos = db.query(Photos).filter(Photos.tags.contains(tags)).all()
     return photos
 
 async def get_photo(photo_id: int, db: Session) -> Photos:
