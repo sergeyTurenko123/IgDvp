@@ -2,7 +2,7 @@ from typing import List
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
-from src.database.models import Photos, Tag, Users, photos_m2m_tag
+from src.database.models import Photos, Tag, Users
 from src.schemas import PhotoUpdate, PhotoStatusUpdate, PhotoModel
 
 async def get_photos(skip: int, limit: int, db: Session) -> List[Photos]:
@@ -37,8 +37,8 @@ async def remove_photo(photo_id: int, user:Users, db: Session) -> Photos | None:
     return photo
 
 
-async def update_photo(photo_id: int, body: PhotoUpdate, user:Users, db: Session) -> Photos | None:
-    tags = db.query(Tag).filter(Tag.id.in_(body.tags)).all()
+async def update_photo(photo_id: int, body: PhotoModel, user:Users, db: Session) -> Photos | None:
+    tags = db.query(Tag).filter(Tag.name.in_(body.tags)).all()
     photo = db.query(Photos).filter(Photos.id == photo_id).filter(Photos.user_id==user.id).first()
     if photo:
         photo.description = body.description

@@ -7,7 +7,6 @@ import qrcode
 from io import BytesIO
 
 from src.database.models import Photos, Users, Qrcode
-from src.schemas import CloudinarImage
 from src.conf.config import config
 
 async def cloudinary_editor(photo_id, cloudinary_action, user:Users, db: Session):

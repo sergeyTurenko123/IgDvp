@@ -5,7 +5,7 @@ from src.schemas import PhotoResponse, CloudinarImage, QrcodeResponse
 from src.repository import cloudinary as repository_cloudinary
 from src.database.db import get_db
 from src.database.models import Users
-from src.services.auth import auth_service
+from src.services.auth import auth_services
 
 router = APIRouter(prefix='/cloudinary', tags=["cloudinary"])
 
@@ -41,7 +41,7 @@ async def cloudinary_editor(
         },
     ),
     db: Session = Depends(get_db), 
-    current_user: Users = Depends(auth_service.get_current_user)
+    current_user: Users = Depends(auth_services.get_current_user)
 ):
     for val in cloudinary_action:
         if val.count(None) == 0:
@@ -55,6 +55,6 @@ async def cloudinary_editor(
 async def qrcode_cread(
     photo_id: int,
     db: Session = Depends(get_db), 
-    current_user: Users = Depends(auth_service.get_current_user)):
+    current_user: Users = Depends(auth_services.get_current_user)):
     img = await repository_cloudinary.qrcode_cread(photo_id, current_user, db)
     return img      
