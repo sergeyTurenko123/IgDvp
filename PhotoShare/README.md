@@ -2,7 +2,6 @@
 docker-compose up - запуск служб, визначених у файлі docker-compose.yml.
 alembic revision --autogenerate -m 'Init' - створюємо міграцію.
 alembic upgrade head - застосуємо створену міграцію
-uvicorn main:app --host localhost --reload - запуск FastAPI.
 створіть файл .env та додайте свої данні
 DB_URL: str = 
 SECRET_KEY_JWT: str = 
@@ -17,7 +16,7 @@ REDIS_PASSWORD: str | None = None
 CLD_NAME: str = '
 CLD_API_KEY: int = 
 CLD_API_SECRET: str = "secret"
-
+uvicorn main:app --host localhost --reload - запуск FastAPI.
 В браузері:
 http://127.0.0.1:8000/docs
 Проходите та підтверджуєте свій ємейл. 
