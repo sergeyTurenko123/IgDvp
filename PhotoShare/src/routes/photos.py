@@ -21,7 +21,7 @@ allowed_operation_patch = RoleAccess([Role.admin, Role.moderator, Role.user])
 allowed_operation_delete = RoleAccess([Role.admin, Role.moderator])
 
 
-@router.get("/", response_model=List[PhotoResponse])
+@router.get("/", response_model=List[PhotoResponse], summary="Returns the list of photos.")
 async def read_photos(
     skip: int = 0, 
     limit: int = 100, 
@@ -29,22 +29,24 @@ async def read_photos(
     photos = await repository_photo.get_photos(skip, limit, db)
     return photos
     
-@router.get("/photo/", response_model=List[PhotoResponse])
+@router.get("/photo/", response_model=List[PhotoResponse], summary="Returns the list of photos with a certain tag.")
 async def read_photos( 
     tag: str,
     db: Session = Depends(get_db)):
     photo = await repository_photo.get_search_by_tags(tag, db)
     return photo
 
-@router.get("/{photo_id}", response_model=PhotoResponse)
+@router.get("/{photo_id}", response_model=PhotoResponse, summary="Returns the photo with a certain id.")
 async def read_photo(photo_id: int, 
                      db: Session = Depends(get_db)):
     photo = await repository_photo.get_photo(photo_id, db)
     return photo
 
 @router.post("/", response_model=PhotoResponse, 
-             status_code=status.HTTP_201_CREATED, 
-             dependencies=[Depends(allowed_operation_post)])
+            status_code=status.HTTP_201_CREATED, 
+            dependencies=[Depends(allowed_operation_post)], 
+            summary="Upploads a photo with a short description and a tag to the cloudinary.",
+            description="Only for authorized users.")
 async def create_photo(
         description: str = Form(...),
         tags: List[str] = Form([]),
@@ -88,7 +90,9 @@ async def create_photo(
     image = await repository_photo.create_image_repository(body, photo_url, current_user, db)
     return image
 
-@router.put("/{photo_id}", response_model=PhotoResponse, dependencies=[Depends(allowed_operation_post)])
+@router.put("/{photo_id}", response_model=PhotoResponse, dependencies=[Depends(allowed_operation_post)],
+            summary="Updates a photo with a short description on the cloudinary.",
+            description="Only for authorized users.")
 async def update_photo(
     photo_id: int,
     description: str = Form(...) ,
@@ -119,7 +123,9 @@ async def update_photo(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
     return photo
 
-@router.patch("/{photo_id}", response_model=PhotoResponse, dependencies=[Depends(allowed_operation_post)])
+@router.patch("/{photo_id}", response_model=PhotoResponse, dependencies=[Depends(allowed_operation_post)],
+            summary="Uppdates a photo status.",
+            description="Only for authorized users.")
 async def update_status_photo(body: PhotoStatusUpdate, photo_id: int, db: Session = Depends(get_db),
                               current_user: Users = Depends(auth_services.get_current_user)):
     photo = await repository_photo.update_status_photo(photo_id, body, current_user, db)
@@ -128,7 +134,9 @@ async def update_status_photo(body: PhotoStatusUpdate, photo_id: int, db: Sessio
     return photo
 
 
-@router.delete("/{photo_id}", response_model=PhotoResponse, dependencies=[Depends(allowed_operation_delete)])
+@router.delete("/{photo_id}", response_model=PhotoResponse, dependencies=[Depends(allowed_operation_delete)],
+            summary="Deletes a photo.",
+            description="Only for authorized users.")
 async def remove_photo(photo_id: int, db: Session = Depends(get_db), 
                        current_user: Users = Depends(auth_services.get_current_user)):
     photo = await repository_photo.remove_photo(photo_id, current_user, db)

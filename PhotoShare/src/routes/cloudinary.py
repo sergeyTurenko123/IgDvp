@@ -9,7 +9,9 @@ from src.services.auth import auth_services
 
 router = APIRouter(prefix='/cloudinary', tags=["cloudinary"])
 
-@router.put("/{photo_id}", response_model=PhotoResponse)
+@router.put("/{photo_id}", response_model=PhotoResponse, 
+            summary="Updates the photo using cloudinary functionality.",
+            description="Choose what you want to do with photo in the dropdown menu.")
 async def cloudinary_editor(
     photo_id: int,
     cloudinary_action: CloudinarImage = Body(
@@ -51,7 +53,9 @@ async def cloudinary_editor(
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Photo not found")
             return photo
 
-@router.get("/{photo_id}", response_model=QrcodeResponse)
+@router.get("/{photo_id}", response_model=QrcodeResponse, 
+            summary="Creates qrcode to access the photo.",
+            description="Use the id of a photo for which you want to create qrcode.")
 async def qrcode_cread(
     photo_id: int,
     db: Session = Depends(get_db), 

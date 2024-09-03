@@ -13,7 +13,10 @@ from src.services.auth import auth_services
 router = APIRouter(prefix='/auth', tags=["auth"])
 security = HTTPBearer()
 
-@router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/signup", response_model=UserResponse,  
+            status_code=status.HTTP_201_CREATED,
+            summary="Register new user in the app.",
+            description="New user data.")
 async def signup(body: UserModel, background_tasks: BackgroundTasks, request: Request, db: Session = Depends(get_db)):
     """
     Accepts data from a new member and adds it to the database
@@ -34,7 +37,8 @@ async def signup(body: UserModel, background_tasks: BackgroundTasks, request: Re
     background_tasks.add_task(send_email, new_user.email, new_user.username, request.base_url)
     return {"user": new_user, "detail": "User successfully created. Check your email for confirmation."}
 
-@router.post("/login", response_model=TokenModel)
+@router.post("/login", response_model=TokenModel, summary="Authentication of a user in the app.",
+            description="Uses user data to log in. Creates JWT token.")
 async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     """
     Route guide for authentication of koristuvach at zastosunku
@@ -56,7 +60,7 @@ async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depen
     await repository_users.update_token(user, refresh_token, db)
     return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
 
-@router.get('/refresh_token', response_model=TokenModel)
+@router.get('/refresh_token', response_model=TokenModel, summary="Updates the user token.")
 async def refresh_token(credentials: HTTPAuthorizationCredentials = Security(security), db: Session = Depends(get_db)):
     """
     Updates the update token in the database for the user.
@@ -77,7 +81,7 @@ async def refresh_token(credentials: HTTPAuthorizationCredentials = Security(sec
     await repository_users.update_token(user, refresh_token, db)
     return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
 
-@router.get('/confirmed_email/{token}')
+@router.get('/confirmed_email/{token}', summary="Confirms the user email.")
 async def confirmed_email(token: str, db: Session = Depends(get_db)):
     """
     Confirms email address
@@ -95,7 +99,8 @@ async def confirmed_email(token: str, db: Session = Depends(get_db)):
     await repository_users.confirmed_email(email, db)
     return {"message": "Email confirmed"}
 
-@router.post('/request_email')
+@router.post('/request_email', summary="Checks if email is confirmed.", 
+            description="If email is not confirmed sends the confirmation emal.")
 async def request_email(body: RequestEmail, background_tasks: BackgroundTasks, request: Request,
                         db: Session = Depends(get_db)):
     """
@@ -117,7 +122,7 @@ async def request_email(body: RequestEmail, background_tasks: BackgroundTasks, r
         background_tasks.add_task(send_email, user.email, user.username, request.base_url)
     return {"message": "Check your email for confirmation."}
 
-@router.get('/{usermame}')
+@router.get('/{usermame}', summary="Returns user info.")
 async def request_email(username:str, response: Response, db:AsyncSession=Depends(get_db)):
     print('_________________________')
     print(f'{username}')

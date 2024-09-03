@@ -20,16 +20,16 @@ allowed_operations_bans = RoleAccess([Role.admin])
 allowed_operations_delete = RoleAccess([Role.admin])
 allowed_operations_admin = RoleAccess([Role.admin])
 
-@router.get("/{user_name}", response_model=User_Photo)
+@router.get("/{user_name}", response_model=User_Photo, summary="Return the user with a specified name.")
 async def read_user_name(user_name: str, db: Session = Depends(get_db)):
     user = await repository_user.get_user_by_username(user_name, db)
     return user
 
-@router.get("/me/", response_model=UserDb)
+@router.get("/me/", response_model=UserDb, summary="Return info about the current.")
 async def read_users_me(user: Users = Depends(auth_services.get_current_user)):
     return user
 
-@router.patch('/avatar', response_model=UserDb)
+@router.patch('/avatar', response_model=UserDb, summary="Update the current users avatar.")
 async def update_avatar_user(
     file: UploadFile = File(), 
     user: Users = Depends(auth_services.get_current_user),
@@ -58,12 +58,12 @@ async def update_avatar_user(
     user = await repository_user.update_avatar(user.email, srcURL, db)
     return user
 
-@router.patch(
-    "/{user_id}",
-    dependencies=[Depends(allowed_operations_modify)],
+@router.patch("/{user_id}",dependencies=[Depends(allowed_operations_modify)],
     status_code=status.HTTP_200_OK,
     response_description=messages.USER_ACCEPTED,
     name="Change user's data",
+    summary="Update the current user info.", 
+    description="Only for admins."
 )
 async def update_user(
     data: UpdateFullProfile,
@@ -99,12 +99,11 @@ async def update_user(
     )
 
 
-@router.delete(
-    "/{user_id}",
-    dependencies=[Depends(allowed_operations_delete)],
-    status_code=status.HTTP_200_OK,
-    response_description="accepted",
-    name="Delete user",
+@router.delete("/{user_id}",dependencies=[Depends(allowed_operations_delete)],
+    status_code=status.HTTP_200_OK,response_description="accepted",
+    name="Delete user", 
+    summary="Delere the user with the specified id.",
+    description="Only for admins."
 )
 async def delete_user(
     user_id: int = Path(gt=0),
