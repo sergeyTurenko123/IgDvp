@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.db import get_db
-from src.services.auth import auth_service
+from src.services.auth import auth_services
 from src.database.models import Users, Role
 from src.schemas import CommentsBase, CommentsResponse
 from src.repository import comments as repository_comments
@@ -25,7 +25,7 @@ allowed_operation_delete = RoleAccess([Role.admin, Role.moderator])
             description="No more than 10 requests per minute.", 
             dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def read_comments(skip: int = 0, limit: int = 100, db: Session = Depends(get_db),
-                     current_user: Users = Depends(auth_service.get_current_user)):
+                     current_user: Users = Depends(auth_services.get_current_user)):
     """
     Route to get the all comments list.
 
@@ -47,7 +47,7 @@ async def read_comments(skip: int = 0, limit: int = 100, db: Session = Depends(g
             dependencies=[Depends(RateLimiter(times=2, seconds=5))])
 async def read_comment(comment_id: int, 
                        db: AsyncSession = Depends(get_db), 
-                       current_user: Users = Depends(auth_service.get_current_user)):
+                       current_user: Users = Depends(auth_services.get_current_user)):
     """
     Route to get the comment by its ID.
 
@@ -72,7 +72,7 @@ async def read_comment(comment_id: int,
              description="No more than 2 requests per minute.",
              dependencies=[Depends(allowed_operation_post), Depends(RateLimiter(times=2, seconds=60))])
 async def create_comment(body: CommentsBase, photo_id: int, db: Session = Depends(get_db),
-                     current_user: Users = Depends(auth_service.get_current_user)):
+                     current_user: Users = Depends(auth_services.get_current_user)):
     """
     Route to add a new comment.
 
@@ -92,7 +92,7 @@ async def create_comment(body: CommentsBase, photo_id: int, db: Session = Depend
             description="Put the comment ID in comment_id line. And then put the values itself to Request body.",
             dependencies=[Depends(RateLimiter(times=2, seconds=60))])
 async def update_comment(comment_id: int, body: CommentsBase, db: Session = Depends(get_db),
-                     current_user: Users = Depends(auth_service.get_current_user)):
+                     current_user: Users = Depends(auth_services.get_current_user)):
     """
     Route to update the comment finded by its ID.
 
@@ -119,7 +119,7 @@ async def update_comment(comment_id: int, body: CommentsBase, db: Session = Depe
                description="No more than 5 requests per minute.",
              dependencies=[Depends(allowed_operation_delete), Depends(RateLimiter(times=5, seconds=60))])
 async def remove_comment(comment_id: int, db: Session = Depends(get_db),
-                     current_user: Users = Depends(auth_service.get_current_user)):
+                     current_user: Users = Depends(auth_services.get_current_user)):
     """
     Route to delete the comment finded by its ID.
 

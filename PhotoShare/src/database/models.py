@@ -9,6 +9,11 @@ from src.database.db import engine
 
 Base = declarative_base()
 
+class Role(enum.Enum):
+    user: str = "user"
+    moderator: str = "moderator"  
+    admin: str = "admin"
+
 class Users(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
@@ -19,11 +24,8 @@ class Users(Base):
     avatar = Column(String(255), nullable=True)
     refresh_token = Column(String(255), nullable=True)
     confirmed = Column(Boolean, default=False)
-
-class Role(enum.Enum):
-    user: str = "user"
-    moderator: str = "moderator"  
-    admin: str = "admin"
+    role = Column("roles", Enum(Role), default=Role.user)
+    active = Column(Boolean, default=False)
 
 photos_m2m_tag = Table(
     "photos_m2m_tag",

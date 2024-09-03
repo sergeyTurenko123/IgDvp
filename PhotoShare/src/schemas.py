@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List
 from pydantic import BaseModel, Field, EmailStr
 
-from src.database.models import Tag
+from src.database.models import Role
 
 class TagModel(BaseModel):
     name: str = Field(max_length=25)
@@ -92,7 +92,7 @@ class User_Photo(BaseModel):
     username: str
     created_at: datetime
     avatar: str
-    photo: List[PhotoBase]
+    photos: List[PhotoBase]
 
 class CommentsBase(BaseModel):
     comment: str = Field(max_length=50)
@@ -105,3 +105,10 @@ class CommentsResponse(CommentsBase):
 
     class Config:
         from_attributes = True
+
+class UpdateProfile(BaseModel):
+    username: str | None = Field(min_length=5, max_length=16)
+
+
+class UpdateFullProfile(BaseModel):
+    role: str | None = None

@@ -3,7 +3,7 @@ from typing import Any, List
 from fastapi import Depends, HTTPException, status, Request
 
 from src.database.models import Users, Role
-from src.services.auth import auth_service
+from src.services.auth import auth_services
 
 
 class RoleAccess:
@@ -21,7 +21,7 @@ class RoleAccess:
     async def __call__(
         self,
         request: Request,
-        current_user: Users = Depends(auth_service.get_current_user),
+        current_user: Users = Depends(auth_services.get_current_user),
     ) -> Any:
         """
         The __call__ function is the actual decorator (async functor).

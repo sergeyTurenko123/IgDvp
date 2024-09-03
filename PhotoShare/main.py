@@ -3,7 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_limiter import FastAPILimiter
 import redis.asyncio as redis
 
-from src.routes import photos, users, auth, cloudinary, comments
+
+from src.routes import photos, users, cloudinary, comments, auth
 from src.conf.config import config
 
 app = FastAPI()
@@ -25,7 +26,7 @@ app.include_router(users.router, prefix='/api')
 app.include_router(cloudinary.router, prefix='/api')
 app.include_router(comments.router, prefix='/api')
 
-@app.on_event("startup")
+# @app.on_event("startup")
 # @asynccontextmanager
 async def startup():
     r = await redis.Redis(

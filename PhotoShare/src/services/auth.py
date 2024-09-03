@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.database.db import get_db
 from src.repository import users as repository_user
 from src.conf.config import config
+from src.repository import logout as repository_logout
 
 
 class Auth:
@@ -105,7 +106,9 @@ class Auth:
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
+        token_banned_is = await repository_logout.check_token(token, db)
+        if token_banned_is:
+            raise credentials_exception
         try:
             # Decode JWT
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
@@ -152,4 +155,4 @@ class Auth:
 
 
 
-auth_service = Auth()
+auth_services = Auth()

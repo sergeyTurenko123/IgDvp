@@ -2,7 +2,7 @@ from typing import List
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
-from src.database.models import Photos, Tag, Users, photos_m2m_tag
+from src.database.models import Photos, Tag, Users
 from src.schemas import PhotoUpdate, PhotoStatusUpdate, PhotoModel
 
 async def get_photos(skip: int, limit: int, db: Session) -> List[Photos]:
