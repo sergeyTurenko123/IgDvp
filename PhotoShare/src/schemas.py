@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import List
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
 from src.database.models import Role
 
@@ -11,8 +11,8 @@ class TagModel(BaseModel):
 class TagResponse(TagModel):
     id: int
 
-    class Config:
-        orm_mode = True
+    class Config(ConfigDict):
+        from_attributes = True
 
 class UserModel(BaseModel):
     username: str = Field(min_length=4, max_length=16)
@@ -27,8 +27,8 @@ class UserDb(BaseModel):
     created_at: datetime
     avatar: str
 
-    class ConfigDict:
-        orm_mode = True
+    class Config(ConfigDict):
+        from_attributes = True
 
 
 class UserResponse(BaseModel):
@@ -67,8 +67,8 @@ class PhotoResponse(BaseModel):
     user: UserDb
     created_at: datetime
     
-    class Config:
-        orm_mode = True
+    class Config(ConfigDict):
+        from_attributes = True
 
 class CloudinarImage(BaseModel):
     rounding: str | None = None
@@ -84,8 +84,8 @@ class QrcodeModel(BaseModel):
 class QrcodeResponse(QrcodeModel):
     id: int
 
-    class Config:
-        orm_mode = True
+    class Config(ConfigDict):
+        from_attributes = True
 
 class User_Photo(BaseModel):
     id: int
@@ -103,7 +103,7 @@ class CommentsResponse(CommentsBase):
     user_id: int
     updated_at: datetime
 
-    class Config:
+    class Config(ConfigDict):
         from_attributes = True
 
 class UpdateProfile(BaseModel):

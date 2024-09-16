@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     DB_URL: str = "postgresql+psycopg2://postgres:11111111@0.0.0.0:postgres/postgres"
     SECRET_KEY_JWT: str = "postgress"
     ALGORITHM: str = "HS256"
-    MAIL_USERNAME: EmailStr = "postgress"
+    MAIL_USERNAME: str = "postgress"
     MAIL_PASSWORD: str = "postgress"
     MAIL_FROM: str = "postgress"
     MAIL_PORT: int = 465
